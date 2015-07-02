@@ -207,8 +207,14 @@ _unix_socket_read(gint fd, gpointer buf, gsize buflen, LogTransportAuxData *aux)
   gint rc;
   struct msghdr msg;
   struct iovec iov[1];
-  gchar ctlbuf[32];
   struct sockaddr_storage ss;
+#if defined(CRED_PASS_SUPPORTED)
+  gchar ctlbuf[32];
+  msg.msg_control = *ctlbuf;
+  msg.msg_controllen = sizeof(ctlbuf);
+#endif
+
+
 
   msg.msg_name = (struct sockaddr *) &ss;
   msg.msg_namelen = sizeof(ss);
